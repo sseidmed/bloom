@@ -19,6 +19,7 @@ export const DELETE = async (request: Request, { params }) => {
 
 export const PATCH = async (request: Request, { params }) => {
   const { updates } = await request.json()
+  const user = await getUserFromClerkID()
 
   const entry = await prisma.prompt.update({
     where: {
@@ -27,21 +28,20 @@ export const PATCH = async (request: Request, { params }) => {
     data: updates,
   })
 
-  // const analysis = await analyzeEntry(entry)
-  // const savedAnalysis = await prisma.entryAnalysis.upsert({
-  //   where: {
-  //     entryId: entry.id,
-  //   },
-  //   update: { ...analysis },
-  //   create: {
-  //     entryId: entry.id,
-  //     userId: user.id,
-  //     ...analysis,
-  //   },
-  // })
+  const analysis = await analyzeEntry(entry.answer)
+
+  const savedAnalysis = await prisma.promptAnalysis.upsert({
+    where: {
+      promptId: params.id,
+    },
+    update: { ...analysis },
+    create: {
+      promptId: params.id,
+      userId: user.id,
+      ...analysis,
+    },
+  })
 
   update(['/seedlings'])
-  return NextResponse.json({ data: { ...entry } })
-
-  // return NextResponse.json({ data: { ...entry, analysis: savedAnalysis } })
+  return NextResponse.json({ data: { ...entry, analysis: savedAnalysis } })
 }

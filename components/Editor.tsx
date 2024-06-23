@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useAutosave } from "react-autosave"
 import Spinner from "./Spinner"
 import { useRouter } from "next/navigation"
+import { analyzeEntry } from "@/utils/ai"
 
 const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
   const [entry, setEntry] = useState(initialEntry)
@@ -48,9 +49,7 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
 
       // create a new prompt with a default answer
       const { data } = await createEntry(globalPrompt.id, selectedLang.id)
-      // console.log("new prompt was created", data)
       setEntry(data)
-      // console.log("entry after new", entry)
     }
   }
 
@@ -79,23 +78,6 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
     },
   })
 
-  // useEffect(() => {
-  //   if (initialEntry) {
-  //     setEntry(initialEntry)
-  //   }
-  // }, [initialEntry])
-
-  // useEffect(() => {
-  //   if (entry) {
-  //     console.log("entry in useEffect", entry.userLanguageId)
-  //     setSelectedLanguage({
-  //       id: entry.userLanguageId,
-  //       name: entry.userLanguage.language.name
-  //     })
-  //     setSelectedPrompt(entry.globalPrompt)
-  //     setPromptAnswer(entry.answer)
-  //   }
-  // }, [entry])
 
   return (
     <div className="w-full h-full grid grid-cols-3 gap-0 relative">
@@ -106,6 +88,7 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
           <div className="w-[16px] h-[16px] rounded-full bg-green-500"></div>
         )}
       </div>
+
       <div className="col-span-2">
         {!entry && (
           <div className="max-w-sm mt-8 ml-2">
@@ -128,7 +111,7 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
           </div>
         )}
 
-        {selectedPrompt && <div className="mt-8 ml-2">{selectedPrompt.content}</div>}
+        {selectedPrompt && <div className="mt-8 ml-2 text-xl font-semibold">{selectedPrompt.content}</div>}
 
         {selectedLanguage && (
           <div className="grid grid-cols-4 gap-4">
@@ -157,36 +140,63 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
                 value={promptAnswer}
                 placeholder="Let's grow your garden! 🌱🌱🌱🌱🌱"
                 onChange={handleClickTextChange}
-                className="w-full h-svh text-xl p-8 ml-2 mt-4"
+                className="w-full h-96 text-xl p-8 mt-4"
               ></textarea>
             </div>
         )}
       </div>
 
-      {/* <div className="border-l border-black/5">
+      <div className="border-l border-black/5">
         <div
-          style={{ background: currentEntry.analysis.color }}
-          className="h-[100px] bg-blue-600 text-white p-8"
+          className="h-[100px] bg-[#B3EBA6] text-white p-8"
         >
-          <h2 className="text-2xl bg-white/25 text-black">Analysis</h2>
+          <h2 className="text-2xl text-black">Analysis</h2>
         </div>
         <div>
           <ul role="list" className="divide-y divide-gray-200">
             <li className="py-4 px-8 flex items-center justify-between">
               <div className="text-xl font-semibold w-1/3">Subject</div>
-              <div className="text-xl">{currentEntry.analysis.subject}</div>
+              <div className="text-xl">{initialEntry.analysis.subject}</div>
             </li>
 
             <li className="py-4 px-8 flex items-center justify-between">
               <div className="text-xl font-semibold">Mood</div>
-              <div className="text-xl">{currentEntry.analysis.mood}</div>
+              <div className="text-xl">{initialEntry.analysis.mood}</div>
             </li>
 
             <li className="py-4 px-8 flex items-center justify-between">
               <div className="text-xl font-semibold">Negative</div>
               <div className="text-xl">
-                {currentEntry.analysis.negative ? 'True' : 'False'}
+                {initialEntry.analysis.negative ? 'True' : 'False'}
               </div>
+            </li>
+            <li className="py-4 px-8">
+              <div className="text-xl font-semibold">Summary</div>
+              <div className="text-xl">{initialEntry.analysis?.summary}</div>
+            </li>
+            <li className="py-4 px-8 flex justify-between">
+              <div className="text-xl font-semibold">Color</div>
+              <div className="text-xl min-w-14"  style={{ backgroundColor: initialEntry.analysis.color }} />
+            </li>
+            <li className="py-4 px-8 flex items-center justify-between">
+              <div className="text-xl font-semibold">Reading Level</div>
+              <div className="text-xl">{initialEntry.analysis.readingLevel}</div>
+            </li>
+            <li className="py-4 px-8 flex items-center justify-between">
+              <div className="text-xl font-semibold">Keywords</div>
+              <div className="text-xl">{initialEntry.analysis.keywords}</div>
+            </li>
+            <li className="py-4 px-8 flex items-center justify-between">
+              <div className="text-xl font-semibold">Category</div>
+              <div className="text-xl">{initialEntry.analysis.category}</div>
+            </li>
+            <li className="py-4 px-8 flex items-center justify-between">
+              <div className="text-xl font-semibold">Sentiment Label</div>
+              <div className="text-xl">{initialEntry.analysis.sentimentLabel}</div>
+            </li>
+            <li className="py-4 px-8 flex items-center justify-between">
+              <div className="text-xl font-semibold">Sentiment Score</div>
+              <div className="text-xl">{initialEntry.analysis.sentimentScore}</div>
             </li>
             <li className="py-4 px-8 flex items-center justify-between">
               <button
@@ -199,7 +209,7 @@ const Editor = ({ userLanguages, entry: initialEntry, isNewPrompt }) => {
             </li>
           </ul>
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }
