@@ -29,8 +29,6 @@ export const PATCH = async (request: Request, { params }) => {
   })
 
   const analysis = await analyzeEntry(entry.answer)
-  console.log("analysis from route", analysis)
-  console.log("what is params", params.id)
 
   const savedAnalysis = await prisma.promptAnalysis.upsert({
     where: {
