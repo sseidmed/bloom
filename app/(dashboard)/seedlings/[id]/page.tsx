@@ -15,7 +15,8 @@ const getEntry = async (id) => {
         include: {
           language: true,
         }
-      }
+      },
+      analysis: true,
     }
   })
 
