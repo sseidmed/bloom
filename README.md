@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## About  
 
-This is a language practice/journal app for foreign language learners. 
+This is a language practice/journal app for foreign language learners using AI. 
 ## Getting Started
 
 First, run the development server:
