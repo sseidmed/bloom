@@ -25,6 +25,7 @@ model User {
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   languages UserLanguage[]
+  analysis   PromptAnalysis[]
 }
 
 model Language {
@@ -65,8 +66,6 @@ model GlobalPrompt {
   @@index([id, languageId])
 }
 
-
-
 model Prompt {
   id                 String @id @default(uuid())
   createdAt         DateTime @default(now())
@@ -76,6 +75,46 @@ model Prompt {
   globalPrompt       GlobalPrompt @relation(fields: [globalPromptId], references: [id])
   userLanguageId     String
   userLanguage       UserLanguage @relation(fields: [userLanguageId], references: [id])
+  analysis           PromptAnalysis?
 
   @@index([userLanguageId])
+}
+
+model PromptAnalysis {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  promptId String
+  prompt Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  mood String @db.Text
+  subject String @db.Text
+  negative Boolean
+  summary String @db.Text
+  color String @db.Text @default("#0101fe")
+  // You can analyze the prompt for specific emotions such as joy, anger, fear, etc.
+  emotion            String?    @db.Text
+  emotionScore       Float?
+  wordCount          Int?
+  sentenceCount      Int?
+  // The estimated reading level (e.g., Flesch-Kincaid grade level)
+  readingLevel       String    @db.Text 
+  // A JSON field to store named entities extracted from the prompt (e.g., people, organizations, locations)
+  entities           Json?
+  keywords           Json?
+  category           String?    @db.Text
+  subcategory        String?    @db.Text
+  location           String?    @db.Text
+  timeMentioned      DateTime?
+  sentimentLabel     String?    @db.Text
+  sentimentScore     Float
+  sentimentConfidence Float?
+  source             String?    @db.Text
+
+  @@unique([promptId])
+  @@index([userId])
 }
