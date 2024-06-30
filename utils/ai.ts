@@ -20,7 +20,7 @@ const analysisSchema = z.object({
       .describe(
         'is the journal entry negative? (i.e. does it contain negative emotions?).'
       ),
-    summary: z.string().describe('quick summary of the entire entry. The summary should be in the original language. For example, an entry in Turkish should have a Turkish summary'),
+    summary: z.string().describe('quick summary of the entire entry. The summary should be in the original language.'),
     color: z
       .string()
       .describe(
