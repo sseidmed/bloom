@@ -4,6 +4,7 @@ import Link from 'next/link'
 const links = [
   { name: '🌿 Seedlings', href: '/seedlings' },
   { name: '🌰 Seed Library', href: '/library' },
+  { name: '📝 Word Lists', href: '/lists'},
   { name: '📊 Info', href: '/info' },
 ]
 
